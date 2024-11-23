@@ -1,6 +1,7 @@
 const express = require('express');
 // const dotenv = require('dotenv');
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./user/routes/authRoutes');
+
 
 // dotenv.config(); 
 

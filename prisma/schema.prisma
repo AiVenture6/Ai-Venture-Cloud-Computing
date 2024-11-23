@@ -13,12 +13,82 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//Table relation
+// 1. Relasi Antara User dan Rating (One to Many)
+// Satu pengguna (User) bisa memberikan banyak rating (Rating)
+// tetapi setiap rating hanya dimiliki oleh satu pengguna
+// 2. Relasi Antara Place dan Rating (One to Many)
+// Satu tempat (Place) bisa memiliki banyak rating (Rating)
+// tetapi setiap rating hanya mengacu pada satu tempat.
+// 3. Relasi Antara Place dan Image
+// Satu tempat (Place) bisa memiliki banyak gambar (Image)
+// tetapi setiap gambar hanya mengacu pada satu tempat.
+// 4. Relasi Antara User, Place, dan Rating (Many to many)
+// Setiap pengguna (User) bisa memberikan banyak rating (Rating) ke banyak tempat (Place).
+// 5. Relasi Antara Booking dan User (Many to one)
+// Satu pengguna (User) dapat memiliki banyak pemesanan (Booking)
+// 6. Relasi Antara Booking dan Place (Many to one)
+// Satu tempat (Place) dapat memiliki banyak pemesanan (Booking)
+
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  password    String
+  id        Int      @id @default(autoincrement()) //primary key
+  email     String   @unique
+  password  String
+  name      String
+  google_id String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ratings  Rating[] //has a relation with tb Rating
+  bookings Booking[] //has a relation with tb Booking
+}
+
+model Places {
+  id          Int    @id @default(autoincrement()) //Primary key
   name        String
-  google_id   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description String
+  category    String
+  price_range Int
+  rating      Float
+  coordinate  Json
+
+  ratings Rating[] //has a relation with tb Rating
+  images Image[] //has a relation with tb Image
+  bookings Booking[] //has a relation with tb Booking
+}
+
+model Rating {
+  id Int @id @default(autoincrement())
+  user_id Int //foreign key
+  place_id Int //foreign key
+  rating Float
+  review String
+  
+  user User @relation(fields: [user_id],references: [id]) //Define relation to tb User
+  place Places @relation(fields: [place_id],references: [id]) //Define relation to tb Place
+
+  @@unique([user_id, place_id]) // one user only can post one rating in each places
+
+}
+
+model Image {
+  id Int @id @default(autoincrement()) //Primary key
+  place_id Int //Foreign key
+  url String
+  cluster Int
+
+  place Places @relation(fields: [place_id], references: [id]) //Define relation to tb Place
+}
+
+model Booking {
+  id Int @id @default(autoincrement()) //Primary key
+  name String
+  quantity Int
+  date DateTime
+  time DateTime
+  user_id Int //foreign key
+  place_id Int //foreign key
+
+  user User @relation(fields: [user_id], references: [id]) //Define relation to tb User
+  place Places @relation(fields: [place_id],references: [id]) //Define relation to tb User
 }
