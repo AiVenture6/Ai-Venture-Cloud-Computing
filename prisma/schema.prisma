@@ -29,6 +29,8 @@ generator client {
 // Satu pengguna (User) dapat memiliki banyak pemesanan (Booking)
 // 6. Relasi Antara Booking dan Place (Many to one)
 // Satu tempat (Place) dapat memiliki banyak pemesanan (Booking)
+// 7. Relasi antara User dan Scan (one to many)
+// Satu User bisa memiliki banyak Scan
 
 model User {
   id        Int      @id @default(autoincrement()) //primary key
@@ -41,6 +43,7 @@ model User {
 
   ratings  Rating[] //has a relation with tb Rating
   bookings Booking[] //has a relation with tb Booking
+  scans    Scan[] //has a relation with tb Scan
 }
 
 model Places {
@@ -48,47 +51,58 @@ model Places {
   name        String
   description String
   category    String
+  city        String
   price_range Int
   rating      Float
-  coordinate  Json
+  coordinate  String
 
-  ratings Rating[] //has a relation with tb Rating
-  images Image[] //has a relation with tb Image
+  ratings  Rating[] //has a relation with tb Rating
+  images   Image[] //has a relation with tb Image
   bookings Booking[] //has a relation with tb Booking
 }
 
 model Rating {
-  id Int @id @default(autoincrement())
-  user_id Int //foreign key
+  id       Int    @id @default(autoincrement())
+  user_id  Int //foreign key
   place_id Int //foreign key
-  rating Float
-  review String
-  
-  user User @relation(fields: [user_id],references: [id]) //Define relation to tb User
-  place Places @relation(fields: [place_id],references: [id]) //Define relation to tb Place
+  rating   Float
+  review   String
+
+  user  User   @relation(fields: [user_id], references: [id]) //Define relation to tb User
+  place Places @relation(fields: [place_id], references: [id]) //Define relation to tb Place
 
   @@unique([user_id, place_id]) // one user only can post one rating in each places
-
 }
 
 model Image {
-  id Int @id @default(autoincrement()) //Primary key
+  id       Int    @id @default(autoincrement()) //Primary key
   place_id Int //Foreign key
-  url String
-  cluster Int
+  url      String
+  cluster  Int
 
   place Places @relation(fields: [place_id], references: [id]) //Define relation to tb Place
 }
 
 model Booking {
-  id Int @id @default(autoincrement()) //Primary key
-  name String
+  id       Int      @id @default(autoincrement()) //Primary key
+  name     String
   quantity Int
-  date DateTime
-  time DateTime
-  user_id Int //foreign key
+  date     DateTime
+  time     DateTime
+  user_id  Int //foreign key
   place_id Int //foreign key
 
+  user  User   @relation(fields: [user_id], references: [id]) //Define relation to tb User
+  place Places @relation(fields: [place_id], references: [id]) //Define relation to tb User
+}
+
+model Scan {
+  id        Int      @id @default(autoincrement()) //Primary key
+  user_id   Int //foreign key
+  image     String
+  cluster   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   user User @relation(fields: [user_id], references: [id]) //Define relation to tb User
-  place Places @relation(fields: [place_id],references: [id]) //Define relation to tb User
 }
