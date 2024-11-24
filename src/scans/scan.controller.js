@@ -8,8 +8,8 @@ const {
 const { userAuthMiddleware } = require('../utils/auth.middleware');
 
 const router = express.Router();
-
-router.post('/', userAuthMiddleware, async (req, res) => {
+router.use(userAuthMiddleware);
+router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
     const { image, cluster } = req.body;
@@ -20,7 +20,7 @@ router.post('/', userAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get('/', userAuthMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
     const scans = await getScansByUser(userId);
@@ -30,7 +30,7 @@ router.get('/', userAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get('/:id', userAuthMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const scan = await getScanById(Number(id));
@@ -40,7 +40,7 @@ router.get('/:id', userAuthMiddleware, async (req, res) => {
   }
 });
 
-router.delete('/:id', userAuthMiddleware, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await removeScan(Number(id));

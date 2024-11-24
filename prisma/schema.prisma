@@ -42,7 +42,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  ratings  Rating[] //has a relation with tb Rating
+  ratingsplace  PlaceRating[] //has a relation with tb Rating
+  ratingsrestaurant  RestaurantRating[] //has a relation with tb Rating
   bookings Booking[] //has a relation with tb Booking
   scans    Scan[] //has a relation with tb Scan
 }
@@ -54,32 +55,39 @@ model Places {
   category    String
   city        String
   price_range Int
-  rating      Float
   coordinate  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  ratings  Rating[] //has a relation with tb Rating
   images   Image[] //has a relation with tb Image
   bookings Booking[] //has a relation with tb Booking
+  ratings  PlaceRating[] //has a relation with tb Rating
 }
 
-model Rating {
-  id       Int    @id @default(autoincrement())
-  user_id  Int //foreign key
-  place_id Int //foreign key
-  rating   Float
-  review   String
+model PlaceRating {
+  id        Int       @id @default(autoincrement())
+  user_id   Int       // foreign key ke User
+  place_id  Int       // foreign key ke Places
+  rating    Float
+  review    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  user  User   @relation(fields: [user_id], references: [id]) //Define relation to tb User
-  place Places @relation(fields: [place_id], references: [id]) //Define relation to tb Place
+  user      User      @relation(fields: [user_id], references: [id])
+  place     Places    @relation(fields: [place_id], references: [id])
 
-  @@unique([user_id, place_id]) // one user only can post one rating in each places
+  @@unique([user_id, place_id]) // Pastikan satu user hanya bisa memberikan rating pada satu Place
 }
+
+
 
 model Image {
-  id       Int    @id @default(autoincrement()) //Primary key
-  place_id Int //Foreign key
-  url      String
-  cluster  Int
+  id          Int    @id @default(autoincrement()) //Primary key
+  place_id    Int //Foreign key
+  image_url   String
+  cluster     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   place Places @relation(fields: [place_id], references: [id]) //Define relation to tb Place
 }
@@ -92,6 +100,8 @@ model Booking {
   time     DateTime
   user_id  Int //foreign key
   place_id Int //foreign key
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user  User   @relation(fields: [user_id], references: [id]) //Define relation to tb User
   place Places @relation(fields: [place_id], references: [id]) //Define relation to tb User
@@ -106,4 +116,34 @@ model Scan {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [user_id], references: [id]) //Define relation to tb User
+}
+
+model Restaurant {
+  id          Int       @id @default(autoincrement())
+  name        String
+  city        String
+  description String
+  price       String
+  sales       String
+  distance    String
+  image       String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt 
+
+  ratings     RestaurantRating[] //has a relation with tb Rating
+}
+
+model RestaurantRating {
+  id            Int       @id @default(autoincrement())
+  user_id       Int       // foreign key ke User
+  restaurant_id Int       // foreign key ke Restaurant
+  rating        Float
+  review        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [user_id], references: [id])
+  restaurant    Restaurant @relation(fields: [restaurant_id], references: [id])
+
+  @@unique([user_id, restaurant_id]) // Pastikan satu user hanya bisa memberikan rating pada satu Restaurant
 }
