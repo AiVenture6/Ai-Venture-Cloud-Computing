@@ -1,44 +1,95 @@
-const { 
-    findRatings,
-    findRatingById,
-    insertRating,
-    deleteRating,
-    editRating,
- } = require("./rating.model");
+const {
+  getPlaceRatings,
+  getRestaurantRatings,
+  createPlaceRating,
+  createRestaurantRating,
+  updatePlaceRating,
+  updateRestaurantRating,
+  deletePlaceRating,
+  deleteRestaurantRating,
+} = require('./rating.model');
 
-const getAllRatings = async () => {
-    const ratings = await findRatings();
-    return ratings;
+const getPlaceRatingsService = async (placeId) => {
+  try {
+    return await getPlaceRatings(placeId);
+  } catch (error) {
+    throw new Error('Error fetching place ratings');
+  }
 };
 
-const getRatingById = async (id) => {
-    const rating = await findRatingById(id);
-    if (!rating) {
-        throw Error("Rating not found");
-    }
-    return rating;
+const getRestaurantRatingsService = async (restaurantId) => {
+  try {
+    return await getRestaurantRatings(restaurantId);
+  } catch (error) {
+    throw new Error('Error fetching restaurant ratings');
+  }
 };
 
-const createRating = async (newratingData) => {
-    const rating = await insertRating(newratingData);
-    return rating;
+const createPlaceRatingService = async (userId, placeId, rating, review) => {
+  try {
+    return await createPlaceRating(userId, placeId, rating, review);
+  } catch (error) {
+    throw new Error('Error creating place rating');
+  }
 };
 
-const deleteRatingById = async (id) => {
-    await getRatingById(id);
-    await deleteRating(id);
+const createRestaurantRatingService = async (
+  userId,
+  restaurantId,
+  rating,
+  review
+) => {
+  try {
+    return await createRestaurantRating(userId, restaurantId, rating, review);
+  } catch (error) {
+    throw new Error('Error creating restaurant rating');
+  }
 };
 
-const editRatingById = async (id, ratingData) => {
-    await getRatingById(id);
-    const rating = await editRating(id, ratingData);
-    return rating;    
-}
+const updatePlaceRatingService = async (userId, placeId, rating, review) => {
+  try {
+    return await updatePlaceRating(userId, placeId, rating, review);
+  } catch (error) {
+    throw new Error('Error updating place rating');
+  }
+};
+
+const updateRestaurantRatingService = async (
+  userId,
+  restaurantId,
+  rating,
+  review
+) => {
+  try {
+    return await updateRestaurantRating(userId, restaurantId, rating, review);
+  } catch (error) {
+    throw new Error('Error updating restaurant rating');
+  }
+};
+
+const deletePlaceRatingService = async (userId, placeId) => {
+  try {
+    return await deletePlaceRating(userId, placeId);
+  } catch (error) {
+    throw new Error('Error deleting place rating');
+  }
+};
+
+const deleteRestaurantRatingService = async (userId, restaurantId) => {
+  try {
+    return await deleteRestaurantRating(userId, restaurantId);
+  } catch (error) {
+    throw new Error('Error deleting restaurant rating');
+  }
+};
 
 module.exports = {
-    getAllRatings,
-    getRatingById,
-    createRating,
-    deleteRatingById,
-    editRatingById,
+  getPlaceRatingsService,
+  getRestaurantRatingsService,
+  createPlaceRatingService,
+  createRestaurantRatingService,
+  updatePlaceRatingService,
+  updateRestaurantRatingService,
+  deletePlaceRatingService,
+  deleteRestaurantRatingService,
 };

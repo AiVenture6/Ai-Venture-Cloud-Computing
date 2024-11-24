@@ -1,61 +1,64 @@
-const prisma = require("../db");
+const prisma = require('../db');
 
-const findRatings = async () => {
-    const ratings = await prisma.rating.findMany();
-    return ratings;
+const getPlaceRatings = (placeId) => {
+  return prisma.placeRating.findMany({
+    where: { place_id: placeId },
+    include: { user: true },
+  });
 };
 
-const findRatingById = async (id) => {
-    const rating = await prisma.rating.findUnique({
-        where: {
-            id
-        },
-    });
-    return rating;
+const getRestaurantRatings = (restaurantId) => {
+  return prisma.restaurantRating.findMany({
+    where: { restaurant_id: restaurantId },
+    include: { user: true },
+  });
 };
 
-const insertRating = async (ratingData) => {
-    const rating = await prisma.rating.create({
-        data: {
-            id: ratingData.id,
-            user_id: ratingData.user_id,
-            place_id: ratingData.place_id,
-            rating: ratingData.rating,
-            review: ratingData.review,
-        },
-    });
-    return rating;
+const createPlaceRating = (userId, placeId, rating, review) => {
+  return prisma.placeRating.create({
+    data: { user_id: userId, place_id: placeId, rating, review },
+  });
 };
 
-const deleteRating = async (id) => {
-   await prisma.rating.delete({
-    where: {
-        id,
-    },
-   }); 
+const createRestaurantRating = (userId, restaurantId, rating, review) => {
+  return prisma.restaurantRating.create({
+    data: { user_id: userId, restaurant_id: restaurantId, rating, review },
+  });
 };
 
-const editRating = async (id, ratingData) => {
-    const rating = await prisma.rating.update({
-        where: {
-            id: parseInt(id),
-        },
-        data: {
-            id: ratingData.id,
-            user_id: ratingData.user_id,
-            place_id: ratingData.place_id,
-            rating: ratingData.rating,
-            review: ratingData.review,
-        },
-    });
-    return rating;
+const updatePlaceRating = (userId, placeId, rating, review) => {
+  return prisma.placeRating.updateMany({
+    where: { user_id: userId, place_id: placeId },
+    data: { rating, review },
+  });
+};
+
+const updateRestaurantRating = (userId, restaurantId, rating, review) => {
+  return prisma.restaurantRating.updateMany({
+    where: { user_id: userId, restaurant_id: restaurantId },
+    data: { rating, review },
+  });
+};
+
+const deletePlaceRating = (userId, placeId) => {
+  return prisma.placeRating.deleteMany({
+    where: { user_id: userId, place_id: placeId },
+  });
+};
+
+const deleteRestaurantRating = (userId, restaurantId) => {
+  return prisma.restaurantRating.deleteMany({
+    where: { user_id: userId, restaurant_id: restaurantId },
+  });
 };
 
 module.exports = {
-    findRatings,
-    findRatingById,
-    insertRating,
-    deleteRating,
-    editRating,
-
+  getPlaceRatings,
+  getRestaurantRatings,
+  createPlaceRating,
+  createRestaurantRating,
+  updatePlaceRating,
+  updateRestaurantRating,
+  deletePlaceRating,
+  deleteRestaurantRating,
 };

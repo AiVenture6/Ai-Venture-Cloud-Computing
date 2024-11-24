@@ -9,6 +9,7 @@ const { userAuthMiddleware } = require('../utils/auth.middleware');
 
 const router = express.Router();
 router.use(userAuthMiddleware);
+
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
