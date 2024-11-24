@@ -38,6 +38,7 @@ model User {
   password  String
   name      String
   google_id String?
+  picture   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
