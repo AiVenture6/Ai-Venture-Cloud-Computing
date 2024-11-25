@@ -1,11 +1,12 @@
 const express = require('express');
 const userController = require('./user/user.controller');
 const imagesController = require('./images/images.controller');
-const placesController = require('./places/places.controller');
+const placesController = require('./places/place.controller');
 const ratingController = require('./rating/rating.controller');
 const scansController = require('./scans/scan.controller');
 const restaurantsController = require('./restaurants/restaurant.controller');
 const hotelsController = require('./hotels/hotel.controller');
+const ticketController = require('./tickets/ticket.controller');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.use('/ratings', ratingController);
 app.use('/scans', scansController);
 app.use('/restaurants', restaurantsController);
 app.use('/hotels', hotelsController);
+app.use('/tickets', ticketController);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Ai-venture API' });
