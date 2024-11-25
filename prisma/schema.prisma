@@ -69,6 +69,7 @@ model Places {
   bookings Booking[] //has a relation with tb Booking
   ratings  PlaceRating[] //has a relation with tb Rating
   ticket   PlaceTicket[]
+  bookmark Bookmark[]
 }
 
 model PlaceRating {
@@ -237,13 +238,16 @@ model Bookmark {
   user_id       Int
   hotel_id      Int?
   restaurant_id Int?
+  place_id      Int?
   created_at    DateTime @default(now())
 
   user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   hotel         Hotel?   @relation(fields: [hotel_id], references: [id], onDelete: SetNull)
+  place         Places?   @relation(fields: [place_id], references: [id], onDelete: SetNull)
   restaurant    Restaurant? @relation(fields: [restaurant_id], references: [id], onDelete: SetNull)
 
   @@index([user_id])
   @@index([hotel_id])
+  @@index([place_id])
   @@index([restaurant_id])
 }
