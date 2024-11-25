@@ -16,9 +16,6 @@ const oauth2Client = new OAuth2Client(
 
 const authenticateGoogleUser = async (code) => {
   try {
-    console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET);
-    console.log('Received code:', code);
-
     const { tokens } = await oauth2Client.getToken(code);
     if (!tokens) {
       throw new Error('No tokens received');

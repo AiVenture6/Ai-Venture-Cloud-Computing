@@ -36,7 +36,8 @@ router.get('/restaurant/:restaurantId/ratings', async (req, res) => {
 });
 
 router.post('/place/:placeId/rating', async (req, res) => {
-  const { userId, rating, review } = req.body;
+  const { rating, review } = req.body;
+  const userId = req.user.id;
   const { placeId } = req.params;
   try {
     const newRating = await createPlaceRatingService({
@@ -54,7 +55,8 @@ router.post('/place/:placeId/rating', async (req, res) => {
 });
 
 router.post('/restaurant/:restaurantId/rating', async (req, res) => {
-  const { userId, rating, review } = req.body;
+  const { rating, review } = req.body;
+  const userId = req.user.id;
   const { restaurantId } = req.params;
   try {
     const newRating = await createRestaurantRatingService({
@@ -72,7 +74,8 @@ router.post('/restaurant/:restaurantId/rating', async (req, res) => {
 });
 
 router.put('/place/:placeId/rating', async (req, res) => {
-  const { userId, rating, review } = req.body;
+  const { rating, review } = req.body;
+  const userId = req.user.id;
   const { placeId } = req.params;
   try {
     const updatedRating = await updatePlaceRatingService({
@@ -88,8 +91,10 @@ router.put('/place/:placeId/rating', async (req, res) => {
 });
 
 router.put('/restaurant/:restaurantId/rating', async (req, res) => {
-  const { userId, rating, review } = req.body;
+  const { rating, review } = req.body;
+  const userId = req.user.id;
   const { restaurantId } = req.params;
+  console.log(userId, restaurantId, rating, review);
   try {
     const updatedRating = await updateRestaurantRatingService({
       userId,
@@ -97,6 +102,7 @@ router.put('/restaurant/:restaurantId/rating', async (req, res) => {
       rating,
       review,
     });
+    console.log(updatedRating);
     res.json({ message: 'Rating updated successfully', rating: updatedRating });
   } catch (error) {
     res.status(500).json({ message: error.message });
