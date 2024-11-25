@@ -119,7 +119,6 @@ router.delete('/place/:placeId/rating/:userId', async (req, res) => {
   }
 });
 
-// Menghapus rating untuk restoran
 router.delete('/restaurant/:restaurantId/rating/:userId', async (req, res) => {
   const { userId, restaurantId } = req.params;
   try {

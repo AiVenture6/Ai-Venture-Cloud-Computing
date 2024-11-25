@@ -19,11 +19,11 @@ const getRestaurantById = async (id) => {
 };
 
 const addRestaurant = async (data) => {
-    const { name, description, city, price, sales, distance, image } = data;
-    if (!name || !description || !city || !price || !sales || !distance || !image) {
+    const { name, description, city, price, sales, location, distance, image } = data;
+    if (!name || !description || !city || !price || !sales || !location || !distance || !image ) {
         throw new Error('All fields are required');
     }
-    return await createRestaurant({ name, description, city, price, sales, distance, image });
+    return await createRestaurant({ name, description, city, price, sales, location, distance, image });
 };
 
 const updatedRestaurant = async (id, data) => {
