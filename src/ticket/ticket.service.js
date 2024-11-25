@@ -1,44 +1,41 @@
-const { 
-    findTickets,
-    findTicketById,
-    insertTicket,
-    deleteTicket,
-    editTicket,
- } = require("./ticket.model");
+const {
+  findTickets,
+  findTicketById,
+  insertTicket,
+  deleteTicket,
+  editTicket,
+} = require('./ticket.model');
 
 const getAllTickets = async () => {
-    const tickets = await findTickets();
-    return tickets;
+  return await findTickets();
 };
 
 const getTicketById = async (id) => {
-    const ticket = await findTicketById(id);
-    if (!ticket) {
-        throw Error("Ticket not found");
-    }
-    return ticket;
+  const ticket = await findTicketById(id);
+  if (!ticket) {
+    throw new Error('Ticket not found');
+  }
+  return ticket;
 };
 
 const createTicket = async (newTicketData) => {
-    const ticket = await insertTicket(newTicketData);
-    return ticket;
+  return await insertTicket(newTicketData);
 };
 
 const deleteTicketById = async (id) => {
-    await getTicketById(id);
-    await deleteTicket(id);
+  const ticket = await getTicketById(id); // Verify ticket exists
+  await deleteTicket(id);
 };
 
 const editTicketById = async (id, ticketData) => {
-    await getTicketById(id);
-    const ticket = await editTicket(id, ticketData);
-    return ticket;    
-}
+  const ticket = await getTicketById(id); // Verify ticket exists
+  return await editTicket(id, ticketData);
+};
 
 module.exports = {
-    getAllTickets,
-    getTicketById,
-    createTicket,
-    deleteTicketById,
-    editTicketById,
+  getAllTickets,
+  getTicketById,
+  createTicket,
+  deleteTicketById,
+  editTicketById,
 };

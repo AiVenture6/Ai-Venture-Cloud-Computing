@@ -7,7 +7,7 @@ const scansController = require('./scans/scan.controller');
 const restaurantsController = require('./restaurants/restaurant.controller');
 const hotelsController = require('./hotels/hotel.controller');
 const bookmarksController = require('./bookmarks/bookmark.controller');
-const ticketController = require('./ticket/ticket.controller');
+const ticketsController = require('./ticket/ticket.controller');
 const notificationController = require('./notification/notification.controller');
 
 
@@ -23,7 +23,7 @@ app.use('/scans', scansController);
 app.use('/restaurants', restaurantsController);
 app.use('/hotels', hotelsController);
 app.use('/bookmarks', bookmarksController);
-app.use('./tickets', ticketController);
+app.use('/tickets', ticketsController);
 app.use('/notifications', notificationController);
 
 app.get('/', (req, res) => {
