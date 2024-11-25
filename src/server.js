@@ -6,6 +6,10 @@ const ratingController = require('./rating/rating.controller');
 const scansController = require('./scans/scan.controller');
 const restaurantsController = require('./restaurants/restaurant.controller');
 const hotelsController = require('./hotels/hotel.controller');
+const bookmarksController = require('./bookmarks/bookmark.controller');
+const ticketController = require('./ticket/ticket.controller');
+const notificationController = require('./notification/notification.controller');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +22,9 @@ app.use('/ratings', ratingController);
 app.use('/scans', scansController);
 app.use('/restaurants', restaurantsController);
 app.use('/hotels', hotelsController);
+app.use('/bookmarks', bookmarksController);
+app.use('./tickets', ticketController);
+app.use('/notifications', notificationController);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Ai-venture API' });
