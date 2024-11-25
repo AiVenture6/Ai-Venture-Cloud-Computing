@@ -237,6 +237,7 @@ model Bookmark {
   id            Int      @id @default(autoincrement())
   user_id       Int
   hotel_id      Int?
+  place_id      Int?
   restaurant_id Int?
   place_id      Int?
   created_at    DateTime @default(now())
