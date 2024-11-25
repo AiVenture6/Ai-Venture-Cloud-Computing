@@ -7,7 +7,7 @@ const scansController = require('./scans/scan.controller');
 const restaurantsController = require('./restaurants/restaurant.controller');
 const hotelsController = require('./hotels/hotel.controller');
 const bookmarksController = require('./bookmarks/bookmark.controller');
-const ticketsController = require('./ticket/ticket.controller');
+const ticketsController = require('./tickets/ticket.controller');
 const notificationController = require('./notification/notification.controller');
 
 
