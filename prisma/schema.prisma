@@ -239,7 +239,6 @@ model Bookmark {
   hotel_id      Int?
   place_id      Int?
   restaurant_id Int?
-  place_id      Int?
   created_at    DateTime @default(now())
 
   user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
