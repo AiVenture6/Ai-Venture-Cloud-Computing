@@ -1,44 +1,47 @@
-const { 
-    findNotifications,
-    findNotificationById,
-    insertNotification,
-    deleteNotification,
-    editNotification,
- } = require("./notification.model");
+const {
+  findNotifications,
+  findNotificationById,
+  insertNotification,
+  deleteNotification,
+  editNotification,
+} = require('./notification.model');
 
 const getAllNotifications = async () => {
-    const notifications = await findNotifications();
-    return notifications;
+  return await findNotifications();
 };
 
 const getNotificationById = async (id) => {
-    const notification = await findNotificationById(id);
-    if (!notification) {
-        throw Error("Notification not found");
-    }
-    return notification;
+  const notification = await findNotificationById(id);
+  if (!notification) {
+    throw new Error('Notification not found');
+  }
+  return notification;
 };
 
-const createNotification = async (newNotificationData) => {
-    const notification = await insertNotification(newNotificationData);
-    return notification;
+const createNotification = async (userId, newNotificationData) => {
+  return await insertNotification(userId, newNotificationData);
 };
 
 const deleteNotificationById = async (id) => {
-    await getNotificationById(id);
-    await deleteNotification(id);
+  const notification = await getNotificationById(id);
+  if (!notification) {
+    throw new Error('Notification not found');
+  }
+  await deleteNotification(id);
 };
 
-const editNotificationById = async (id, notificationData) => {
-    await getNotificationById(id);
-    const notification = await editNotification(id, notificationData);
-    return notification;    
-}
+const editNotificationById = async (id, userId, notificationData) => {
+  const notification = await getNotificationById(id);
+  if (!notification) {
+    throw new Error('Notification not found');
+  }
+  return await editNotification(id, userId, notificationData);
+};
 
 module.exports = {
-    getAllNotifications,
-    getNotificationById,
-    createNotification,
-    deleteNotificationById,
-    editNotificationById,
+  getAllNotifications,
+  getNotificationById,
+  createNotification,
+  deleteNotificationById,
+  editNotificationById,
 };

@@ -1,88 +1,85 @@
-const express = require("express");
+const express = require('express');
 const {
-    getAllNotifications,
-    getNotificationById,
-    createNotification,
-    deleteNotificationById,
-    editNotificationById,
-} = require("./notification.service");
+  getAllNotifications,
+  getNotificationById,
+  createNotification,
+  deleteNotificationById,
+  editNotificationById,
+} = require('./notification.service');
 
 const { userAuthMiddleware } = require('../utils/auth.middleware');
 const router = express.Router();
 router.use(userAuthMiddleware);
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
+  try {
     const notifications = await getAllNotifications();
-    res.send(notifications);
-});
-
-router.get("/:id", async (req, res) => {
-    try {
-        const notificationId = parseInt(req.params.id);
-        const notification = await getNotificationById(parseInt(notificationId));
-        res.send(notification);
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-router.post("/", async (req, res) => {
-    try {
-        const newnotificationData = req.body;
-        const notification = await createNotification(newnotificationData);
-        res.send({
-            data: notification,
-            message: "create notification success",
-        });
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-router.delete("/:id", async (req, res) => {
-    try {
-        const notificationId = req.params.id;
-        await deleteNotificationById(parseInt(notificationId));
-        res.send("notification deleted")
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-router.put("/:id", async (req, res) => {
-    const notificationId = req.params.id;
-    const notificationData = req.body;
-
-    if (!(
-        notificationData.id &&
-        notificationData.user_id &&
-        notificationData.title &&
-        notificationData.description
-    )) {
-        return res.status(400).send("some fields are missing");
-    }
-
-    const notification = await editNotificationById(parseInt(notificationId), notificationData);
-    res.send({
-        data: notification,
-        message: "edit notification success",
+    res.json({
+      message: 'Notifications retrieved successfully',
+      data: notifications,
     });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
 });
 
-router.patch("/:id", async (req, res) => {
-    try {
-        const notificationId = req.params.id;
-        const notificationData = req.body;
+router.get('/:id', async (req, res) => {
+  try {
+    const notificationId = parseInt(req.params.id, 10);
+    const notification = await getNotificationById(notificationId);
+    res.json({
+      message: 'Notification retrieved successfully',
+      data: notification,
+    });
+  } catch (error) {
+    res.status(404).json({ status: 'error', message: error.message });
+  }
+});
 
-        const notification = await editNotificationById(parseInt(notificationId), notificationData);
-        res.send({
-            data: notification,
-            message: "edit notification success"
-        });
-    } catch (error) {
-        res.status(400).send(error.message)
-    }
+router.post('/', async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const newNotificationData = req.body;
+    const notification = await createNotification(userId, newNotificationData);
+    res.status(201).json({
+      message: 'Notification created successfully',
+      data: notification,
+    });
+  } catch (error) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const notificationId = parseInt(req.params.id, 10);
+    await deleteNotificationById(notificationId);
+    res.json({
+      message: 'Notification deleted successfully',
+    });
+  } catch (error) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const notificationId = parseInt(req.params.id, 10);
+    const notificationData = req.body;
+    console.log(notificationId, notificationData);
+    const notification = await editNotificationById(
+      notificationId,
+      userId,
+      notificationData
+    );
+    res.json({
+      message: 'Notification updated successfully',
+      data: notification,
+    });
+  } catch (error) {
+    res.status(400).json({ status: 'error', message: error.message });
+  }
 });
 
 module.exports = router;
-
