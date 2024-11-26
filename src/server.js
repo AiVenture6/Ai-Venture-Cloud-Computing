@@ -9,6 +9,7 @@ const hotelsController = require('./hotels/hotel.controller');
 const bookmarksController = require('./bookmarks/bookmark.controller');
 const ticketsController = require('./tickets/ticket.controller');
 const notificationController = require('./notification/notification.controller');
+const historyController = require('./histories/history.controller');
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/hotels', hotelsController);
 app.use('/bookmarks', bookmarksController);
 app.use('/tickets', ticketsController);
 app.use('/notifications', notificationController);
+app.use('/histories', historyController);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Ai-venture API' });

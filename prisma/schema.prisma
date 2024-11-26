@@ -70,6 +70,7 @@ model Places {
   ratings  PlaceRating[] //has a relation with tb Rating
   ticket   PlaceTicket[]
   bookmark Bookmark[]
+  history  History[]
 }
 
 model PlaceRating {
@@ -218,6 +219,7 @@ model Notification {
 model History {
   id            Int      @id @default(autoincrement())
   user_id       Int
+  place_id      Int?
   hotel_id      Int?
   restaurant_id Int?
   visited_at    DateTime @default(now())
@@ -225,10 +227,12 @@ model History {
   updated_at    DateTime @updatedAt
 
   user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  place         Places?   @relation(fields: [place_id], references: [id], onDelete: SetNull)
   hotel         Hotel?   @relation(fields: [hotel_id], references: [id], onDelete: SetNull)
   restaurant    Restaurant? @relation(fields: [restaurant_id], references: [id], onDelete: SetNull)
 
   @@index([user_id])
+  @@index([place_id])
   @@index([hotel_id])
   @@index([restaurant_id])
 }
