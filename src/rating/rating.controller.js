@@ -39,7 +39,7 @@ router.get('/restaurant/:restaurantId/ratings', async (req, res) => {
   }
 });
 
-router.get('/hotel/:hotelId/ratings', async (req, res) => {
+router.get('/hotel/:hotelId/rating', async (req, res) => {
   const { hotelId } = req.params;
   try {
     const ratings = await getHotelRatingsService(parseInt(hotelId));
