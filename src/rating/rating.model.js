@@ -14,6 +14,13 @@ const getRestaurantRatings = (restaurantId) => {
   });
 };
 
+const getHotelRatings = (hotelId) => {
+  return prisma.hotelRating.findMany({
+    where: { hotel_id: hotelId },
+    include: { user: true },
+  });
+};
+
 const createPlaceRating = (userId) => {
   return prisma.placeRating.create({
     data: {
@@ -36,6 +43,17 @@ const createRestaurantRating = (userId) => {
   });
 };
 
+const createHotelRating = (data) => {
+  return prisma.hotelRating.create({
+    data: {
+      user_id: data.userId,
+      hotel_id: data.hotelId,
+      rating: data.rating,
+      review: data.review,
+    },
+  });
+};
+
 const updatePlaceRating = (userId, placeId, rating, review) => {
   return prisma.placeRating.updateMany({
     where: { user_id: userId, place_id: placeId },
@@ -43,16 +61,28 @@ const updatePlaceRating = (userId, placeId, rating, review) => {
   });
 };
 
-const updateRestaurantRating = async ({ userId, restaurantId, rating, review }) => {
+const updateRestaurantRating = async ({
+  userId,
+  restaurantId,
+  rating,
+  review,
+}) => {
   return prisma.restaurantRating.update({
     where: {
-        user_id: userId.id,
-        restaurant_id: restaurantId,
+      user_id: userId.id,
+      restaurant_id: restaurantId,
     },
     data: {
       rating,
       review,
     },
+  });
+};
+
+const updateHotelRating = ({ userId, hotelId, rating, review }) => {
+  return prisma.hotelRating.updateMany({
+    where: { user_id: userId, hotel_id: hotelId },
+    data: { rating, review },
   });
 };
 
@@ -68,13 +98,23 @@ const deleteRestaurantRating = (userId, restaurantId) => {
   });
 };
 
+const deleteHotelRating = (userId, hotelId) => {
+  return prisma.hotelRating.deleteMany({
+    where: { user_id: userId, hotel_id: hotelId },
+  });
+};
+
 module.exports = {
   getPlaceRatings,
   getRestaurantRatings,
+  getHotelRatings,
   createPlaceRating,
   createRestaurantRating,
+  createHotelRating,
   updatePlaceRating,
   updateRestaurantRating,
+  updateHotelRating,
   deletePlaceRating,
   deleteRestaurantRating,
+  deleteHotelRating,
 };
