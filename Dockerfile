@@ -1,12 +1,15 @@
-FROM node:21
+FROM node:20
 
-WORKDIR /src
+WORKDIR /app
+
 COPY package*.json ./
 
 RUN npm install
+
 COPY . .
-RUN npm run lint
+
+RUN npx prisma generate
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
