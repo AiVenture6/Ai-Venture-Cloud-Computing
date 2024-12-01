@@ -35,6 +35,7 @@ const authenticateGoogleUser = async (code) => {
       name: data.name,
       email: data.email,
       picture: data.picture,
+      password: 'googleauth',
       isOtpVerified: true,
     });
   }
