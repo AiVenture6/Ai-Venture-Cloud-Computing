@@ -1,46 +1,40 @@
 const prisma = require('../db');
 
 const findUserByEmail = async (email) => {
-  return await prisma.user.findUnique({
-    where: { email },
-  });
-};
-
-const createUser = async (userData) => {
-  return await prisma.user.create({
-    data: {
-      google_id: userData.google_id || null,
-      email: userData.email,
-      name: userData.name,
-      password: userData.password || 'googleuser',
-      picture: userData.picture || null,
-    },
-  });
+  return prisma.user.findUnique({ where: { email } });
 };
 
 const findUserById = async (id) => {
-  return await prisma.user.findUnique({
-    where: { id },
+  return prisma.user.findUnique({ where: { id } });
+};
+
+const createUser = async (data) => {
+  return prisma.user.create({ data });
+};
+
+const updateUserData = async (id, updates) => {
+  return prisma.user.update({ where: { id }, data: updates });
+};
+
+const updateUserOtp = async (userId, otp, otpExpiry) => {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { otp, otp_expiry: otpExpiry },
   });
 };
 
-const updateUserData = async (userId, updatedData) => {
-  return await prisma.user.update({
+const updateUserVerificationStatus = async (userId, isVerified) => {
+  await prisma.user.update({
     where: { id: userId },
-    data: updatedData,
-  });
-};
-
-const deleteUser = async (userId) => {
-  return await prisma.user.delete({
-    where: { id: userId },
+    data: { isOtpVerified: isVerified },
   });
 };
 
 module.exports = {
   findUserByEmail,
-  createUser,
   findUserById,
+  createUser,
   updateUserData,
-  deleteUser,
+  updateUserOtp,
+  updateUserVerificationStatus,
 };

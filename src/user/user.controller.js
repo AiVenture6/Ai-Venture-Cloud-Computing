@@ -3,6 +3,7 @@ const {
   authenticateGoogleUser,
   loginUser,
   registerUser,
+  verifyUserOtp,
   getUserProfileById,
   updateUserProfile,
 } = require('./user.service');
@@ -21,64 +22,63 @@ router.get('/google', (req, res) => {
     ].join(' '),
     access_type: 'offline',
   });
-  const url = `${baseUrl}?${params.toString()}`;
-  res.redirect(url);
+  res.redirect(`${baseUrl}?${params.toString()}`);
 });
 
 router.get('/google/callback', async (req, res) => {
   try {
     const { code } = req.query;
+    if (!code) throw new Error('Authorization code is required');
 
-    if (!code) {
-      return res
-        .status(400)
-        .json({ message: 'Authorization code is required' });
-    }
-    const userData = await authenticateGoogleUser(code);
-
+    const { user, token, isNewUser } = await authenticateGoogleUser(code);
     res.json({
-      message: userData.isNewUser
-        ? 'User registered successfully'
-        : 'Login successful',
-      data: userData.user,
-      token: userData.token,
+      message: isNewUser ? 'User registered successfully' : 'Login successful',
+      data: user,
+      token,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Authentication failed', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
     if (!name || !email || !password) {
       return res
         .status(400)
         .json({ message: 'Name, email, and password are required' });
     }
 
-    const { user, token } = await registerUser({ name, email, password });
-    res
-      .status(201)
-      .json({ message: 'User registered successfully', user, token });
+    const result = await registerUser({ name, email, password });
+    return res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+router.post('/register/verify-otp', userAuthMiddleware, async (req, res) => {
+  try {
+    userId = req.user.id;
+    const otp = req.body;
+
+    if (!userId || !otp) {
+      return res.status(400).json({ message: 'User ID and OTP are required' });
+    }
+
+    const result = await verifyUserOtp({ userId, otp });
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: 'Email and password are required' });
-    }
-
-    const data = await loginUser(email, password);
-    res.json({ message: 'Login successful', data });
+    const { user, token } = await loginUser(email, password);
+    res.json({ message: 'Login successful', user, token });
   } catch (error) {
     res.status(401).json({ message: error.message });
   }
@@ -88,7 +88,6 @@ router.get('/profile', userAuthMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
     const userProfile = await getUserProfileById(userId);
-
     res.json(userProfile);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -98,19 +97,12 @@ router.get('/profile', userAuthMiddleware, async (req, res) => {
 router.put('/profile', userAuthMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { success, messages, updatedUser } = await updateUserProfile(
-      userId,
-      req.body
-    );
-    if (success) {
-      res.json({
-        message: 'Update successful',
-        changes: messages,
-        userProfile: updatedUser,
-      });
-    } else {
-      res.status(400).json({ message: 'No updates were made' });
-    }
+    const { changes, updatedUser } = await updateUserProfile(userId, req.body);
+    res.json({
+      message: 'Profile updated successfully',
+      changes,
+      user: updatedUser,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

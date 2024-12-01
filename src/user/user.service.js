@@ -1,151 +1,102 @@
 const bcrypt = require('bcrypt');
+const { OAuth2Client } = require('google-auth-library');
 const {
   findUserByEmail,
-  createUser,
   findUserById,
+  createUser,
   updateUserData,
-  deleteUser,
+  updateUserOtp,
+  updateUserVerificationStatus,
 } = require('./user.model');
-const { OAuth2Client } = require('google-auth-library');
+const { sendOtpEmail } = require('../utils/otp.utils');
 const { generateToken } = require('../utils/auth.middleware');
+const { addMinutes } = require('date-fns');
+
 const oauth2Client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  'http://localhost:3000/auth/google/callback'
+  process.env.GOOGLE_REDIRECT_URI
 );
 
 const authenticateGoogleUser = async (code) => {
-  try {
-    const { tokens } = await oauth2Client.getToken(code);
-    if (!tokens) {
-      throw new Error('No tokens received');
-    }
-    oauth2Client.setCredentials(tokens);
+  const { tokens } = await oauth2Client.getToken(code);
+  oauth2Client.setCredentials(tokens);
 
-    const { data } = await oauth2Client.request({
-      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+  const { data } = await oauth2Client.request({
+    url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+  });
+
+  let user = await findUserByEmail(data.email);
+  const isNewUser = !user;
+
+  if (!user) {
+    user = await createUser({
+      google_id: data.id,
+      name: data.name,
+      email: data.email,
+      picture: data.picture,
     });
-
-    let user = await findUserByEmail(data.email);
-    const isNewUser = !user;
-
-    if (!user) {
-      user = await createUser({
-        id: data.id,
-        google_id: data.id,
-        name: data.name,
-        email: data.email,
-        picture: data.picture,
-      });
-    }
-
-    const token = generateToken({
-      id: user.id,
-      google_id: user.google_id,
-      email: user.email,
-      name: user.name,
-      picture: user.picture,
-    });
-
-    return { user, token, isNewUser };
-  } catch (error) {
-    console.error('Error in authenticateGoogleUser:', error.message);
-    throw error;
   }
+
+  const token = generateToken({ id: user.id, email: user.email });
+  return { user, token, isNewUser };
+};
+
+const registerUser = async ({ name, email, password }) => {
+  const user = await findUserByEmail(email);
+  if (user) throw new Error('User with this email already exists');
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await createUser({ name, email, password: hashedPassword });
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otpExpiry = addMinutes(new Date(), 5);
+  const token =  generateToken({ id: newUser.id });
+  await updateUserOtp(newUser.id, otp, otpExpiry);
+  await sendOtpEmail(email, otp);
+
+  return { message: 'User registered successfully. Please verify your OTP.', token };
 };
 
 const loginUser = async (email, password) => {
   const user = await findUserByEmail(email);
-  if (!user) {
-    throw Error('User not found');
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    throw new Error('Invalid credentials');
   }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw Error('Invalid credentials');
-  }
-
-  const token = generateToken({ id: user.id, name: user.name });
+  const token = generateToken({ id: user.id });
   return { user, token };
 };
 
-const registerUser = async (userData) => {
-  try {
-    if (!userData.password) {
-      throw new Error('Password is required');
-    }
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    let user = await findUserByEmail(userData.email);
+const verifyUserOtp = async ({ userId, otp }) => {
+  const user = await findUserById(userId);
+  if (!user) throw new Error('User not found');
 
-    if (!user) {
-      user = await createUser({
-        ...userData,
-        password: hashedPassword,
-      });
-    } else {
-      throw new Error('User with this email already exists');
-    }
-
-    const token = generateToken({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    });
-
-    return { user, token };
-  } catch (error) {
-    throw new Error(`Registration failed: ${error.message}`);
+  if (user.otp !== otp || new Date() > new Date(user.otp_expiry)) {
+    throw new Error('Invalid or expired OTP');
   }
+
+  await updateUserOtp(userId, null, null);
+  await updateUserVerificationStatus(userId, true);
+
+  const token = generateToken({ id: user.id });
+  return { message: 'OTP verified successfully', token };
 };
 
 const getUserProfileById = async (id) => {
   const user = await findUserById(id);
-  if (!user) throw Error('User not found');
+  if (!user) throw new Error('User not found');
   return user;
 };
 
 const updateUserProfile = async (userId, updates) => {
-  try {
-    const user = await findUserById(userId);
-    if (!user) throw Error('User not found');
-
-    const updatedData = {};
-    const updateMessages = [];
-
-    if (updates.name) {
-      updatedData.name = updates.name;
-      updateMessages.push('Name successfully updated');
-    }
-
-    if (updates.password) {
-      updatedData.password = await bcrypt.hash(updates.password, 10);
-      updateMessages.push('Password successfully updated');
-    }
-
-    if (updates.picture) {
-      updatedData.picture = updates.picture;
-      updateMessages.push('Profile picture successfully updated');
-    }
-
-    if (Object.keys(updatedData).length > 0) {
-      const updatedUser = await updateUserData(userId, updatedData);
-      return {
-        success: true,
-        messages: updateMessages,
-        updatedUser,
-      };
-    }
-
-    throw new Error('No updates provided');
-  } catch (error) {
-    throw error;
-  }
+  const updatedUser = await updateUserData(userId, updates);
+  return { changes: Object.keys(updates), updatedUser };
 };
 
 module.exports = {
   authenticateGoogleUser,
-  loginUser,
   registerUser,
+  loginUser,
+  verifyUserOtp,
   getUserProfileById,
   updateUserProfile,
 };
