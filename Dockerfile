@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 
 RUN npx prisma generate
-ENV GOOGLE_APPLICATION_CREDENTIALS=ai-venture-442807-804939b7055e.json
+RUN npx prisma migrate deploy
 
 EXPOSE 3000
 

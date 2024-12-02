@@ -13,25 +13,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-//Table relation
-// 1. Relasi Antara User dan Rating (One to Many)
-// Satu pengguna (User) bisa memberikan banyak rating (Rating)
-// tetapi setiap rating hanya dimiliki oleh satu pengguna
-// 2. Relasi Antara Place dan Rating (One to Many)
-// Satu tempat (Place) bisa memiliki banyak rating (Rating)
-// tetapi setiap rating hanya mengacu pada satu tempat.
-// 3. Relasi Antara Place dan Image
-// Satu tempat (Place) bisa memiliki banyak gambar (Image)
-// tetapi setiap gambar hanya mengacu pada satu tempat.
-// 4. Relasi Antara User, Place, dan Rating (Many to many)
-// Setiap pengguna (User) bisa memberikan banyak rating (Rating) ke banyak tempat (Place).
-// 5. Relasi Antara Booking dan User (Many to one)
-// Satu pengguna (User) dapat memiliki banyak pemesanan (Booking)
-// 6. Relasi Antara Booking dan Place (Many to one)
-// Satu tempat (Place) dapat memiliki banyak pemesanan (Booking)
-// 7. Relasi antara User dan Scan (one to many)
-// Satu User bisa memiliki banyak Scan
-
 model User {
   id        Int      @id @default(autoincrement()) //primary key
   email     String   @unique
