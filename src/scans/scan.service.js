@@ -5,9 +5,9 @@ const {
   deleteScan,
 } = require('../scans/scan.model');
 
-const addScan = async (userId, image, cluster) => {
+const addScan = async (userId, imageUrl, cluster) => {
   try {
-    const scanData = { user_id: userId, image, cluster };
+    const scanData = { user_id: userId, image: imageUrl, cluster };
     const newScan = await createScan(scanData);
     return {
       message: 'Scan successfully created',
