@@ -9,6 +9,8 @@ const createPlace = async (data) => {
       city: data.city,
       price_range: data.price_range,
       coordinate: data.coordinate,
+      cluster: data.cluster,
+      image_url: data.image_url,
     },
   });
 };
@@ -20,7 +22,17 @@ const getPlaceById = async (id) => {
     },
     include: {
       ratings: true,
-      images: true,
+    },
+  });
+};
+
+const getPlaceByCluster = async (cluster) => {
+  return await prisma.places.findUnique({
+    where: {
+      cluster: parseInt(cluster),
+    },
+    include: {
+      ratings: true,
     },
   });
 };
@@ -37,6 +49,8 @@ const updatePlace = async (id, data) => {
       city: data.city,
       price_range: data.price_range,
       coordinate: data.coordinate,
+      cluster: data.cluster,
+      image_url: data.image_url,
     },
   });
 };
@@ -56,6 +70,7 @@ const getAllPlaces = async () => {
 module.exports = {
   createPlace,
   getPlaceById,
+  getPlaceByCluster,
   updatePlace,
   deletePlace,
   getAllPlaces,

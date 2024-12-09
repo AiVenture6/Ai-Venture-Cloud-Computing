@@ -23,6 +23,15 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/:cluster', async (req, res) => {
+  try {
+    const place = await getPlaceByClusterService(req.params.cluster);
+    res.status(200).json(place);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const place = await getPlaceByIdService(req.params.id);

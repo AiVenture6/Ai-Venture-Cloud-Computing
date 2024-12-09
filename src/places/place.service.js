@@ -1,6 +1,7 @@
 const {
   createPlace,
   getPlaceById,
+  getPlaceByCluster,
   updatePlace,
   deletePlace,
   getAllPlaces,
@@ -12,6 +13,16 @@ const createPlaceService = async (data) => {
     return newPlace;
   } catch (error) {
     throw new Error(`Error creating place: ${error.message}`);
+  }
+};
+
+const getPlaceByClusterService = async (cluster) => {
+  try {
+    const place = await getPlaceByCluster(cluster);
+    if (!place) throw new Error('Place not found');
+    return place;
+  } catch (error) {
+    throw new Error(`Error fetching place: ${error.message}`);
   }
 };
 
@@ -55,6 +66,7 @@ const getAllPlacesService = async () => {
 module.exports = {
   createPlaceService,
   getPlaceByIdService,
+  getPlaceByClusterService,
   updatePlaceService,
   deletePlaceService,
   getAllPlacesService,
