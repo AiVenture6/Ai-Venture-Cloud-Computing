@@ -11,7 +11,7 @@ const notificationController = require('./notification/notification.controller')
 const historyController = require('./histories/history.controller');
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use('/auth', userController);
