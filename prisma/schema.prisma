@@ -41,13 +41,13 @@ model User {
 model Places {
   id          Int    @id @default(autoincrement())
   name        String
-  description String
+  description String  @db.Text
   category    String
   city        String
   price_range Int
   coordinate  String
   cluster     Int
-  image_url   String
+  image_url   String @db.VarChar(1000)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

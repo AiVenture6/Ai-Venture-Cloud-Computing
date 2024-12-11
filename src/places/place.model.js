@@ -27,7 +27,7 @@ const getPlaceById = async (id) => {
 };
 
 const getPlaceByCluster = async (cluster) => {
-  return await prisma.places.findUnique({
+  return await prisma.places.findMany({
     where: {
       cluster: parseInt(cluster),
     },

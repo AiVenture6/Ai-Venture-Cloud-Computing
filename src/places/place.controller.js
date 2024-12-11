@@ -2,6 +2,7 @@ const express = require('express');
 const {
   createPlaceService,
   getPlaceByIdService,
+  getPlaceByClusterService,
   updatePlaceService,
   deletePlaceService,
   getAllPlacesService,
