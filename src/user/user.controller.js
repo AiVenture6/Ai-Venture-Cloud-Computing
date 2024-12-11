@@ -61,7 +61,7 @@ router.post('/register', async (req, res) => {
 router.post('/register/verify-otp', userAuthMiddleware, async (req, res) => {
   try {
     userId = req.user.id;
-    const otp = req.body;
+    const { otp } = req.body;
 
     if (!userId || !otp) {
       return res.status(400).json({ message: 'User ID and OTP are required' });

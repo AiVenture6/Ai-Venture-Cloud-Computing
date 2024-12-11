@@ -52,11 +52,14 @@ const registerUser = async ({ name, email, password }) => {
   const newUser = await createUser({ name, email, password: hashedPassword });
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const otpExpiry = addMinutes(new Date(), 5);
-  const token =  generateToken({ id: newUser.id });
+  const token = generateToken({ id: newUser.id });
   await updateUserOtp(newUser.id, otp, otpExpiry);
   await sendOtpEmail(email, otp);
 
-  return { message: 'User registered successfully. Please verify your OTP.', token };
+  return {
+    message: 'User registered successfully. Please verify your OTP.',
+    token,
+  };
 };
 
 const loginUser = async (email, password) => {
@@ -72,9 +75,10 @@ const verifyUserOtp = async ({ userId, otp }) => {
   const user = await findUserById(userId);
   if (!user) throw new Error('User not found');
 
-  if (user.otp !== otp || new Date() > new Date(user.otp_expiry)) {
-    throw new Error('Invalid or expired OTP');
-  }
+  const expiry = user.otp_expiry instanceof Date ? user.otp_expiry.getTime() : new Date(user.otp_expiry).getTime();
+  
+  if (String(user.otp) !== String(otp)) throw new Error('Invalid OTP');
+  if (Date.now() > expiry) throw new Error('OTP has expired');
 
   await updateUserOtp(userId, null, null);
   await updateUserVerificationStatus(userId, true);
