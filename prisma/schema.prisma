@@ -149,6 +149,7 @@ model Hotel {
   description String     @db.Text
   price       String
   image       String     @db.VarChar(1000)
+  location    String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt 
 
