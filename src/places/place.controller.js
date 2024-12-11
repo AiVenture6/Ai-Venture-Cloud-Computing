@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/:cluster', async (req, res) => {
+router.get('/cluster/:cluster', async (req, res) => {
   try {
     const place = await getPlaceByClusterService(req.params.cluster);
     res.status(200).json(place);
