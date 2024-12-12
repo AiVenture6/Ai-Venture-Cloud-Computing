@@ -5,9 +5,8 @@ const findAllHotels = async () => {
 };
 
 const findHotelById = async (id) => {
-  idparse = parseInt(id);
   return await prisma.hotel.findUnique({
-    where: { id: id },
+    where: { id: parseInt(id) },
   });
 };
 
@@ -19,14 +18,14 @@ const createHotel = async (data) => {
 
 const updateHotel = async (id, data) => {
   return await prisma.hotel.update({
-    where: { id },
+    where: { id: parseInt(id) },
     data,
   });
 };
 
 const deleteHotelById = async (id) => {
   return await prisma.hotel.delete({
-    where: { id },
+    where: { id: parseInt(id) },
   });
 };
 

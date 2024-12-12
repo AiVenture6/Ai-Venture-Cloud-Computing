@@ -30,7 +30,6 @@ model User {
   ratingsrestaurant  RestaurantRating[]
   ratinghotel        HotelRating[]
   ticketplace        PlaceTicket[] 
-  bookings           Booking[]
   scans              Scan[]
   history            History[]
   notifications      Notification[]
@@ -46,13 +45,13 @@ model Places {
   city            String
   price_range     Int
   rating_average  Float
+  distance        Float
   coordinate      String
   cluster         Int
   image_url       String @db.VarChar(1000)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  bookings Booking[]
   ratings  PlaceRating[]
   ticket   PlaceTicket[]
   bookmark Bookmark[]
@@ -85,21 +84,6 @@ model PlaceTicket {
 
   user      User      @relation(fields: [user_id], references: [id])
   place     Places    @relation(fields: [place_id], references: [id])
-}
-
-model Booking {
-  id       Int      @id @default(autoincrement())
-  name     String
-  quantity Int
-  date     DateTime
-  time     DateTime
-  user_id  Int
-  place_id Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user  User   @relation(fields: [user_id], references: [id])
-  place Places @relation(fields: [place_id], references: [id])
 }
 
 model Scan {

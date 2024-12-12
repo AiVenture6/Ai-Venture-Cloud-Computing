@@ -32,9 +32,10 @@ We extend a warm welcome to you, our esteemed reader, to the documentation perta
     - Deskripsi: Redirect ke Google untuk autentikasi.
   - `GET /user/google/callback` (Read)
     - Deskripsi: Callback setelah autentikasi Google.
-  - `POST /user/register` (Create)
-  - `POST /user/login` (Read/Login)
-  - `GET /user/profile` (Read)
+  - `POST /auth/register` (Create)
+  - `POST /auth/register/verify-otp` (Verify)
+  - `POST /auth/login` (Read/Login)
+  - `GET /auth/profile` (Read)
     - Deskripsi: Mendapatkan informasi profil user yang sedang login.
 
 ---
@@ -60,6 +61,7 @@ We extend a warm welcome to you, our esteemed reader, to the documentation perta
   - `GET /places` (Read)
   - `POST /places` (Create)
   - `GET /places/:id` (Read)
+  - `GET /places/cluster/:cluster` (Read)
   - `PUT /places/:id` (Update)
   - `DELETE /places/:id` (Delete)
 

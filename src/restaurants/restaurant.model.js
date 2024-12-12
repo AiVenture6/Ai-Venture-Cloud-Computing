@@ -6,7 +6,7 @@ const findAllRestaurants = async () => {
 
 const findRestaurantById = async (id) => {
   return await prisma.restaurant.findUnique({
-    where: { id },
+    where: { id: parseInt(id) },
   });
 };
 
@@ -18,14 +18,14 @@ const createRestaurant = async (data) => {
 
 const updateRestaurant = async (id, data) => {
   return await prisma.restaurant.update({
-    where: { id },
+    where: { id: parseInt(id) },
     data,
   });
 };
 
 const deleteRestaurantById = async (id) => {
   return await prisma.restaurant.delete({
-    where: { id },
+    where: { id: parseInt(id) },
   });
 };
 
